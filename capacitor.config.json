@@ -1,0 +1,14 @@
+{
+  "appId": "br.com.rotapro.gestao",
+  "appName": "Rota Pro",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://alexandredir00-web.github.io/rota-pro-app/www/",
+    "cleartext": true
+  },
+  "android": {
+    "backgroundColor": "#09111e",
+    "allowMixedContent": true
+  }
+}
