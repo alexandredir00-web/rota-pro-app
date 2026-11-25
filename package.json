@@ -1,0 +1,12 @@
+{
+  "name": "rota-pro-app",
+  "version": "1.0.0",
+  "description": "Rota Pro - Gestão de Rotas, Vendas em Campo e Despesas de Viagem",
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/filesystem": "^6.0.0",
+    "@capacitor/share": "^6.0.0"
+  }
+}
