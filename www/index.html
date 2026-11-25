@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta name="theme-color" content="#09111e">
-  <title>Rota Pro - Gestão de Campo & Frota</title>
+  <title>Rota Pro MA - Sede Bacabal</title>
 
   <style>
     :root {
@@ -32,7 +32,7 @@
       background: var(--bg-app); color: var(--texto);
     }
 
-    body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+    body { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
 
     .header {
       background: linear-gradient(150deg, #050a14 0%, #0f2544 65%, #163a66 100%);
@@ -95,12 +95,12 @@
 
     label { display: block; font-size: 12px; font-weight: 600; color: var(--subtexto); margin: 11px 0 5px; }
 
-    input, select, textarea {
+    input, select {
       width: 100%; min-width: 0; padding: 12px; border-radius: 10px;
-      border: 1.5px solid var(--borda); background: var(--bg-input); color: #fff; font-size: 16px;
+      border: 1.5px solid var(--borda); background: var(--bg-input); color: #fff; font-size: 15px;
     }
 
-    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--azul); }
+    input:focus, select:focus { outline: none; border-color: var(--azul); }
 
     .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 
@@ -131,7 +131,13 @@
     .st-ausente { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
 
     .acoes-parada { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
-    .acoes-parada .btn-sm { flex: 1; min-width: 90px; }
+    .acoes-parada .btn-sm { flex: 1; min-width: 85px; }
+
+    .chip-rota {
+      display: inline-block; background: rgba(56, 189, 248, 0.12); color: var(--azul);
+      border: 1px solid rgba(56, 189, 248, 0.3); padding: 3px 8px; border-radius: 6px;
+      font-size: 11px; font-weight: 700; margin-bottom: 6px;
+    }
 
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0; background: #060b14;
@@ -140,37 +146,37 @@
     }
 
     .nav-btn {
-      flex: 1; background: none; border: none; color: #64748b; font-size: 11px; font-weight: 600;
+      flex: 1; background: none; border: none; color: #64748b; font-size: 10.5px; font-weight: 600;
       display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer;
     }
     .nav-btn.ativo { color: var(--azul); font-weight: 800; }
-    .nav-icon { font-size: 20px; }
+    .nav-icon { font-size: 19px; }
   </style>
 </head>
 <body>
 
   <div class="header">
     <div class="header-top">
-      <span class="tag-pro">🚚 ROTA PRO • v1.0</span>
+      <span class="tag-pro">🚚 ROTA PRO • SEDE BACABAL - MA</span>
       <div class="header-btns">
         <button class="btn-mini-top" onclick="atualizarAppOTA()">↻ Atualizar</button>
         <span id="badge-rede" class="status-pill">● Online</span>
       </div>
     </div>
-    <h1>Rota Pro — Gestão de Campo</h1>
-    <p>Roteiro inteligente, check-in de visitas, cobrança e controle de viagem.</p>
+    <h1>Rota Pro — Operação Maranhão</h1>
+    <p>5 Rotas Regionais • 10 Cidades • Catálogo de Produtos & Pedidos</p>
 
     <div class="kpi-grid">
       <div class="kpi-box">
-        <div class="kpi-label">Paradas Hoje</div>
+        <div class="kpi-label">Paradas</div>
         <div id="kpi-paradas" class="kpi-val" style="color:var(--azul);">0 / 0</div>
       </div>
       <div class="kpi-box">
-        <div class="kpi-label">Recebido Rota</div>
+        <div class="kpi-label">Vendas / Rec.</div>
         <div id="kpi-recebido" class="kpi-val" style="color:var(--verde);">R$ 0,00</div>
       </div>
       <div class="kpi-box">
-        <div class="kpi-label">Despesas Viagem</div>
+        <div class="kpi-label">Despesas Rota</div>
         <div id="kpi-despesas" class="kpi-val" style="color:var(--amarelo);">R$ 0,00</div>
       </div>
     </div>
@@ -182,37 +188,42 @@
     <div id="aba-rota" class="aba ativa">
       <div class="card">
         <div class="card-title">
-          <span>📍 Roteiro do Dia</span>
+          <span>📍 Roteiro de Campo (MA)</span>
           <button class="btn btn-outline btn-sm" onclick="abrirFormParada()">+ Nova Parada</button>
         </div>
 
-        <div class="grid-2">
+        <label style="margin-top:0;">Filtrar por Rota (Sede Bacabal):</label>
+        <select id="filtro-rota-select" onchange="renderizarRota()">
+          <option value="TODAS">🗺️ Todas as 5 Rotas do Maranhão</option>
+        </select>
+
+        <div class="grid-2" style="margin-top:10px;">
           <input type="text" id="filtro-rota" placeholder="🔍 Cliente ou cidade..." oninput="renderizarRota()">
           <select id="filtro-status" onchange="renderizarRota()">
-            <option value="TODOS">Todos os Status</option>
+            <option value="TODOS">Todos Status</option>
             <option value="PENDENTE">⏳ Pendentes</option>
             <option value="CONCLUIDO">✅ Concluídos</option>
-            <option value="AUSENTE">⚠️ Ausente / Reagendar</option>
+            <option value="AUSENTE">⚠️ Ausente</option>
           </select>
         </div>
       </div>
 
-      <!-- FORMULÁRIO RÁPIDO DE PARADA / CHECK-IN -->
+      <!-- FORMULÁRIO RÁPIDO DE PARADA / PEDIDO -->
       <div id="box-form-parada" class="card" style="display:none; border-color:var(--azul);">
         <div class="card-title">
-          <span id="titulo-modal-parada">📌 Registrar Parada na Rota</span>
+          <span id="titulo-modal-parada">📌 Registrar Parada / Pedido</span>
           <button class="btn btn-amarelo btn-sm" onclick="fecharFormParada()">Fechar</button>
         </div>
 
         <input type="hidden" id="visita-id">
 
-        <label>Cliente / Estabelecimento *</label>
-        <input type="text" id="visita-cliente" placeholder="Ex: Mercadinho Central">
+        <label>Rota Regional (Origem: Bacabal - MA) *</label>
+        <select id="visita-rota"></select>
 
         <div class="grid-2">
           <div>
-            <label>Cidade / Região *</label>
-            <input type="text" id="visita-cidade" placeholder="Ex: Bacabal / Lago Verde">
+            <label>Cidade (MA) *</label>
+            <input type="text" id="visita-cidade" placeholder="Ex: Santa Inês">
           </div>
           <div>
             <label>WhatsApp / Telefone *</label>
@@ -220,52 +231,65 @@
           </div>
         </div>
 
-        <label>Endereço / Ponto de Referência (Para GPS)</label>
+        <label>Cliente / Estabelecimento *</label>
+        <input type="text" id="visita-cliente" placeholder="Ex: Comercial Silva">
+
+        <label>Endereço / Referência (GPS)</label>
         <input type="text" id="visita-endereco" placeholder="Ex: Av. Principal, Centro">
+
+        <!-- SELETOR RÁPIDO DE PRODUTOS DO CATÁLOGO -->
+        <label>Adicionar Produto do Catálogo ao Pedido:</label>
+        <div style="display:flex; gap:6px;">
+          <select id="select-produto-rapido" style="flex:2;"></select>
+          <input type="number" id="qtd-produto-rapido" value="1" min="1" style="flex:0.7; text-align:center;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="adicionarProdutoAoPedido()">+ Add</button>
+        </div>
+
+        <label>Itens / Serviços do Pedido</label>
+        <input type="text" id="visita-produtos-resumo" placeholder="Ex: 2x Kit Higienização + 1x Gás R410A">
 
         <div class="grid-2">
           <div>
             <label>Status da Visita</label>
             <select id="visita-status">
-              <option value="PENDENTE">⏳ Pendente (Na Rota)</option>
-              <option value="CONCLUIDO">✅ Visitado / Concluído</option>
-              <option value="AUSENTE">⚠️ Ausente / Reagendar</option>
+              <option value="PENDENTE">⏳ Pendente</option>
+              <option value="CONCLUIDO">✅ Concluído</option>
+              <option value="AUSENTE">⚠️ Ausente</option>
             </select>
           </div>
           <div>
-            <label>Tipo de Operação</label>
+            <label>Operação</label>
             <select id="visita-tipo">
               <option value="Venda / Pedido">🛒 Venda / Pedido</option>
-              <option value="Cobrança / Boleto">💰 Cobrança / Recebimento</option>
+              <option value="Cobrança / Boleto">💰 Cobrança / Boleto</option>
               <option value="Entrega">📦 Entrega</option>
-              <option value="Prospecção">🤝 Visita / Prospecção</option>
+              <option value="Visita Técnica">🔧 Visita Técnica</option>
             </select>
           </div>
         </div>
 
         <div class="grid-2">
           <div>
-            <label>Valor (R$)</label>
+            <label>Valor Total (R$)</label>
             <input type="number" step="0.01" inputmode="decimal" id="visita-valor" placeholder="0,00">
           </div>
           <div>
-            <label>Forma de Pagamento</label>
+            <label>Pagamento</label>
             <select id="visita-pagamento">
               <option value="Pix">Pix</option>
               <option value="Dinheiro">Dinheiro</option>
               <option value="Boleto">Boleto</option>
               <option value="Cartão">Cartão</option>
-              <option value="A Prazo">A Prazo</option>
             </select>
           </div>
         </div>
 
-        <label>Observações da Visita</label>
-        <input type="text" id="visita-obs" placeholder="Ex: Pagou parcela vencida / Voltar terça">
+        <label>Observações</label>
+        <input type="text" id="visita-obs" placeholder="Observação da visita">
 
         <label style="display:flex; align-items:center; gap:8px; margin-top:12px; cursor:pointer;">
           <input type="checkbox" id="visita-salvar-carteira" checked style="width:18px; height:18px;">
-          <span>Salvar cliente na carteira fixa de rotas</span>
+          <span>Salvar cliente na carteira fixa</span>
         </label>
 
         <button class="btn btn-azul" onclick="salvarParadaRota()">💾 SALVAR & SINCRONIZAR</button>
@@ -274,22 +298,66 @@
       <div id="lista-paradas"></div>
     </div>
 
-    <!-- ABA 2: CARTEIRA FIXA & IMPORTAÇÃO DA PLANILHA ANTIGA -->
+    <!-- ABA 2: PRODUTOS & CATÁLOGO -->
+    <div id="aba-produtos" class="aba">
+      <div class="card">
+        <div class="card-title">
+          <span>📦 Catálogo de Produtos</span>
+          <button class="btn btn-outline btn-sm" onclick="toggleFormProduto()">+ Novo Produto</button>
+        </div>
+
+        <div id="box-novo-produto" style="display:none; padding-bottom:12px; border-bottom:1px solid var(--borda); margin-bottom:12px;">
+          <label>Nome do Produto *</label>
+          <input type="text" id="prod-nome" placeholder="Ex: Gás Refrigerante R32">
+          <div class="grid-2">
+            <div>
+              <label>Categoria</label>
+              <input type="text" id="prod-cat" placeholder="Ex: Refrigeração">
+            </div>
+            <div>
+              <label>Preço Venda (R$) *</label>
+              <input type="number" step="0.01" id="prod-preco" placeholder="0,00">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div>
+              <label>Unidade</label>
+              <input type="text" id="prod-un" value="Unidade">
+            </div>
+            <div>
+              <label>Estoque Atual</label>
+              <input type="number" id="prod-est" value="10">
+            </div>
+          </div>
+          <button class="btn btn-azul" onclick="salvarNovoProduto()">💾 CADASTRAR PRODUTO</button>
+        </div>
+
+        <input type="text" id="busca-produto" placeholder="🔍 Filtrar produto por nome ou código..." oninput="renderizarProdutos()">
+      </div>
+
+      <div id="lista-produtos"></div>
+    </div>
+
+    <!-- ABA 3: 5 ROTAS DO MARANHÃO & CARTEIRA DE CLIENTES -->
     <div id="aba-carteira" class="aba">
       <div class="card">
         <div class="card-title">
-          <span>🗂️ Carteira de Clientes</span>
+          <span>🗺️ 5 Rotas MA (Sede: Bacabal)</span>
           <button class="btn btn-outline btn-sm" onclick="sincronizarTudo()">Sincronizar</button>
         </div>
+        <div id="lista-rotas-ma"></div>
+      </div>
 
-        <input type="text" id="busca-carteira" placeholder="🔍 Buscar na carteira..." oninput="renderizarCarteira()">
+      <div class="card">
+        <div class="card-title"><span>🗂️ Carteira de Clientes por Cidade</span></div>
+        <input type="text" id="busca-carteira" placeholder="🔍 Buscar cliente, cidade ou rota..." oninput="renderizarCarteira()">
 
         <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--borda);">
-          <button class="btn btn-amarelo btn-sm" style="width:100%;" onclick="toggleImportador()">📥 Importar Planilha Antiga do Rota Pro</button>
+          <button class="btn btn-amarelo btn-sm" style="width:100%;" onclick="toggleImportador()">📥 Importar Planilha Antiga</button>
           <div id="box-importar" style="display:none; margin-top:10px;">
             <label>Cole o Link ou ID da planilha antiga:</label>
             <input type="text" id="link-antiga" placeholder="https://docs.google.com/spreadsheets/d/...">
-            <button id="btn-imp" class="btn btn-azul btn-sm" style="width:100%; margin-top:8px;" onclick="importarAntiga()">Importar Todos os Dados</button>
+            <button id="btn-imp" class="btn btn-azul btn-sm" style="width:100%; margin-top:8px;" onclick="importarAntiga()">Importar Agora</button>
           </div>
         </div>
       </div>
@@ -297,10 +365,13 @@
       <div id="lista-carteira"></div>
     </div>
 
-    <!-- ABA 3: DESPESAS DE VIAGEM & COMBUSTÍVEL -->
+    <!-- ABA 4: DESPESAS DE VIAGEM -->
     <div id="aba-despesas" class="aba">
       <div class="card">
-        <div class="card-title"><span>⛽ Diário de Bordo & Gastos</span></div>
+        <div class="card-title"><span>⛽ Despesas de Viagem & Frota</span></div>
+
+        <label>Rota Vinculada</label>
+        <select id="desp-rota"></select>
 
         <div class="grid-2">
           <div>
@@ -309,7 +380,7 @@
               <option value="Combustível">⛽ Combustível</option>
               <option value="Alimentação">🍽️ Alimentação</option>
               <option value="Hospedagem">🏨 Hospedagem</option>
-              <option value="Pedágio / Balsa">🛣️ Pedágio / Balsa</option>
+              <option value="Pedágio / Balsa">🛣️ Pedágio</option>
               <option value="Manutenção">🔧 Manutenção</option>
             </select>
           </div>
@@ -321,17 +392,17 @@
 
         <div class="grid-2">
           <div>
-            <label>KM Odômetro (Opcional)</label>
-            <input type="number" inputmode="numeric" id="desp-km" placeholder="Ex: 142500">
+            <label>KM Odômetro</label>
+            <input type="number" inputmode="numeric" id="desp-km" placeholder="Ex: 85400">
           </div>
           <div>
-            <label>Litros (Se combustível)</label>
-            <input type="number" step="0.01" inputmode="decimal" id="desp-litros" placeholder="Ex: 35,5">
+            <label>Litros</label>
+            <input type="number" step="0.01" inputmode="decimal" id="desp-litros" placeholder="Ex: 32,0">
           </div>
         </div>
 
         <label>Descrição / Cidade</label>
-        <input type="text" id="desp-desc" placeholder="Ex: Posto Magnólia - Rota Santa Inês">
+        <input type="text" id="desp-desc" placeholder="Ex: Abastecimento saída de Bacabal">
 
         <button class="btn btn-azul" onclick="salvarDespesaViagem()">💾 LANÇAR DESPESA</button>
       </div>
@@ -347,19 +418,25 @@
       <span class="nav-icon">📍</span>
       <span>Rota Hoje</span>
     </button>
+    <button id="nav-produtos" class="nav-btn" onclick="mudarAba('produtos', this)">
+      <span class="nav-icon">📦</span>
+      <span>Produtos</span>
+    </button>
     <button id="nav-carteira" class="nav-btn" onclick="mudarAba('carteira', this)">
-      <span class="nav-icon">🗂️</span>
-      <span>Carteira</span>
+      <span class="nav-icon">🗺️</span>
+      <span>Rotas & Clientes</span>
     </button>
     <button id="nav-despesas" class="nav-btn" onclick="mudarAba('despesas', this)">
       <span class="nav-icon">⛽</span>
-      <span>Viagem / Gastos</span>
+      <span>Despesas</span>
     </button>
   </div>
 
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbw4FO75WH6VyORiQQwoUkD7A1Ltc0Ne0NAAcgDGcHgcaZMfd-LsHeCTdstiDWGjYxiYzg/exec";
 
+  let rotasMA = JSON.parse(localStorage.getItem("rotapro_rotas") || "[]");
+  let produtos = JSON.parse(localStorage.getItem("rotapro_produtos") || "[]");
   let clientes = JSON.parse(localStorage.getItem("rotapro_clientes") || "[]");
   let visitas = JSON.parse(localStorage.getItem("rotapro_visitas") || "[]");
   let despesas = JSON.parse(localStorage.getItem("rotapro_despesas") || "[]");
@@ -381,15 +458,49 @@
     renderizarTudo();
   }
 
+  function preencherSelects() {
+    const selFiltro = document.getElementById("filtro-rota-select");
+    const selVisita = document.getElementById("visita-rota");
+    const selDesp = document.getElementById("desp-rota");
+
+    const opcoesRotas = rotasMA.map(r => `<option value="${esc(r.nome)}">${esc(r.nome)} (${esc(r.cidades)})</option>`).join("");
+    selFiltro.innerHTML = `<option value="TODAS">🗺️ Todas as 5 Rotas do Maranhão (Sede Bacabal)</option>` + opcoesRotas;
+    selVisita.innerHTML = opcoesRotas;
+    selDesp.innerHTML = opcoesRotas;
+
+    const selProd = document.getElementById("select-produto-rapido");
+    selProd.innerHTML = produtos.map((p, idx) =>
+      `<option value="${idx}">${esc(p.nome)} - ${moeda(p.preco)}</option>`
+    ).join("");
+  }
+
+  function adicionarProdutoAoPedido() {
+    const idx = document.getElementById("select-produto-rapido").value;
+    const qtd = parseInt(document.getElementById("qtd-produto-rapido").value) || 1;
+    const prod = produtos[idx];
+    if (!prod) return;
+
+    const campoResumo = document.getElementById("visita-produtos-resumo");
+    const novoItem = `${qtd}x ${prod.nome}`;
+    campoResumo.value = campoResumo.value ? (campoResumo.value + ", " + novoItem) : novoItem;
+
+    const campoValor = document.getElementById("visita-valor");
+    const valorAtual = parseFloat(campoValor.value) || 0;
+    campoValor.value = (valorAtual + (prod.preco * qtd)).toFixed(2);
+  }
+
   function abrirFormParada(visitaObj = null) {
+    preencherSelects();
     document.getElementById("box-form-parada").style.display = "block";
     if (visitaObj) {
-      document.getElementById("titulo-modal-parada").innerText = "✏️ Editar / Check-in na Parada";
+      document.getElementById("titulo-modal-parada").innerText = "✏️ Check-in / Editar Parada";
       document.getElementById("visita-id").value = visitaObj.id || "";
+      document.getElementById("visita-rota").value = visitaObj.rota || (rotasMA[0] ? rotasMA[0].nome : "");
       document.getElementById("visita-cliente").value = visitaObj.cliente || visitaObj.nome || "";
       document.getElementById("visita-cidade").value = visitaObj.cidade || "";
       document.getElementById("visita-telefone").value = visitaObj.telefone || "";
       document.getElementById("visita-endereco").value = visitaObj.endereco || "";
+      document.getElementById("visita-produtos-resumo").value = visitaObj.produtosResumo || "";
       document.getElementById("visita-status").value = visitaObj.status || "CONCLUIDO";
       document.getElementById("visita-tipo").value = visitaObj.tipoAcao || "Venda / Pedido";
       document.getElementById("visita-valor").value = visitaObj.valor || "";
@@ -399,9 +510,10 @@
       document.getElementById("titulo-modal-parada").innerText = "📌 Nova Parada na Rota";
       document.getElementById("visita-id").value = "";
       document.getElementById("visita-cliente").value = "";
-      document.getElementById("visita-cidade").value = "";
+      document.getElementById("visita-cidade").value = "Bacabal";
       document.getElementById("visita-telefone").value = "";
       document.getElementById("visita-endereco").value = "";
+      document.getElementById("visita-produtos-resumo").value = "";
       document.getElementById("visita-status").value = "PENDENTE";
       document.getElementById("visita-valor").value = "";
       document.getElementById("visita-obs").value = "";
@@ -426,10 +538,12 @@
     const reg = {
       id: idFinal,
       dataStr: hojeStr,
+      rota: document.getElementById("visita-rota").value,
       cliente: cliente,
-      cidade: document.getElementById("visita-cidade").value.trim() || "Rota Geral",
+      cidade: document.getElementById("visita-cidade").value.trim() || "Bacabal",
       telefone: telefone,
       endereco: document.getElementById("visita-endereco").value.trim(),
+      produtosResumo: document.getElementById("visita-produtos-resumo").value.trim(),
       status: document.getElementById("visita-status").value,
       tipoAcao: document.getElementById("visita-tipo").value,
       valor: parseFloat(document.getElementById("visita-valor").value) || 0,
@@ -443,9 +557,38 @@
     else visitas.unshift(reg);
 
     localStorage.setItem("rotapro_visitas", JSON.stringify(visitas));
-
     enviarApi({ acao: "salvarVisita", ...reg });
     fecharFormParada();
+    renderizarTudo();
+  }
+
+  function toggleFormProduto() {
+    const box = document.getElementById("box-novo-produto");
+    box.style.display = box.style.display === "none" ? "block" : "none";
+  }
+
+  function salvarNovoProduto() {
+    const nome = document.getElementById("prod-nome").value.trim();
+    const preco = parseFloat(document.getElementById("prod-preco").value) || 0;
+    if (!nome || preco <= 0) { alert("Preencha o nome e o preço do produto."); return; }
+
+    const novo = {
+      id: "PRD-" + Date.now(),
+      codigo: String(1000 + produtos.length + 1),
+      nome: nome,
+      categoria: document.getElementById("prod-cat").value.trim() || "Geral",
+      unidade: document.getElementById("prod-un").value.trim() || "Unidade",
+      preco: preco,
+      estoque: parseInt(document.getElementById("prod-est").value) || 0
+    };
+
+    produtos.unshift(novo);
+    localStorage.setItem("rotapro_produtos", JSON.stringify(produtos));
+    enviarApi({ acao: "salvarProduto", ...novo });
+
+    document.getElementById("prod-nome").value = "";
+    document.getElementById("prod-preco").value = "";
+    toggleFormProduto();
     renderizarTudo();
   }
 
@@ -456,6 +599,7 @@
     const reg = {
       id: "DSP-" + Date.now(),
       dataStr: new Date().toLocaleDateString("pt-BR"),
+      rota: document.getElementById("desp-rota").value,
       categoria: document.getElementById("desp-cat").value,
       valor: valor,
       km: parseFloat(document.getElementById("desp-km").value) || 0,
@@ -475,16 +619,17 @@
   }
 
   function abrirMapaGPS(endereco, cidade) {
-    const destino = encodeURIComponent((endereco ? endereco + ", " : "") + cidade);
+    const destino = encodeURIComponent((endereco ? endereco + ", " : "") + cidade + ", Maranhão");
     window.open("https://www.google.com/maps/search/?api=1&query=" + destino, "_blank");
   }
 
   function enviarZapVisita(v) {
     const msg = encodeURIComponent(
-      `Olá *${v.cliente}*! Passando para confirmar nosso atendimento hoje:\n` +
+      `Olá *${v.cliente}* (${v.cidade} - MA)! Segue o resumo do atendimento:\n` +
+      `🚚 Rota: *${v.rota}*\n` +
       `📌 Operação: *${v.tipoAcao}*\n` +
-      `💰 Valor: *${moeda(v.valor)}* (${v.pagamento})\n` +
-      (v.obs ? `📝 Obs: ${v.obs}\n` : "") +
+      (v.produtosResumo ? `📦 Itens: ${v.produtosResumo}\n` : "") +
+      `💰 Total: *${moeda(v.valor)}* (${v.pagamento})\n` +
       `\nQualquer dúvida estou à disposição!`
     );
     window.open("https://wa.me/?text=" + msg, "_blank");
@@ -505,7 +650,7 @@
     await enviarApi({ acao: "importarPlanilhaAntiga", linkOuId: link });
     setTimeout(async () => {
       await sincronizarTudo();
-      btn.innerText = "Importar Todos os Dados";
+      btn.innerText = "Importar Agora";
       btn.disabled = false;
       document.getElementById("box-importar").style.display = "none";
       alert("Importação concluída!");
@@ -513,33 +658,36 @@
   }
 
   function renderizarTudo() {
+    preencherSelects();
     atualizarKPIs();
     renderizarRota();
+    renderizarProdutos();
+    renderizarRotasMA();
     renderizarCarteira();
     renderizarDespesas();
   }
 
   function atualizarKPIs() {
-    const hoje = new Date().toLocaleDateString("pt-BR");
-    const paradasHoje = visitas.filter(v => v.dataStr === hoje);
-    const concluidas = paradasHoje.filter(v => v.status === "CONCLUIDO").length;
+    const concluidas = visitas.filter(v => v.status === "CONCLUIDO").length;
     const totalRecebido = visitas.reduce((acc, v) => acc + (v.status === "CONCLUIDO" ? Number(v.valor || 0) : 0), 0);
     const totalDesp = despesas.reduce((acc, d) => acc + Number(d.valor || 0), 0);
 
-    document.getElementById("kpi-paradas").innerText = `${concluidas} / ${paradasHoje.length || visitas.length}`;
+    document.getElementById("kpi-paradas").innerText = `${concluidas} / ${visitas.length}`;
     document.getElementById("kpi-recebido").innerText = moeda(totalRecebido);
     document.getElementById("kpi-despesas").innerText = moeda(totalDesp);
   }
 
   function renderizarRota() {
+    const rotaSel = document.getElementById("filtro-rota-select").value;
     const texto = (document.getElementById("filtro-rota").value || "").toLowerCase();
     const stFiltro = document.getElementById("filtro-status").value;
     const div = document.getElementById("lista-paradas");
 
     const filtrados = visitas.filter(v => {
+      const bateRota = rotaSel === "TODAS" || v.rota === rotaSel;
       const bateTexto = v.cliente.toLowerCase().includes(texto) || v.cidade.toLowerCase().includes(texto);
       const bateStatus = stFiltro === "TODOS" || v.status === stFiltro;
-      return bateTexto && bateStatus;
+      return bateRota && bateTexto && bateStatus;
     });
 
     div.innerHTML = filtrados.map(v => {
@@ -547,53 +695,92 @@
       const tagCls = v.status === "CONCLUIDO" ? "st-concluido" : (v.status === "AUSENTE" ? "st-ausente" : "st-pendente");
       return `
         <div class="parada-card ${cls}">
+          <div class="chip-rota">🚚 ${esc(v.rota || "Rota Geral")}</div>
           <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
             <b style="font-size:15px;">${esc(v.cliente)}</b>
             <span class="badge-status ${tagCls}">${esc(v.status)}</span>
           </div>
           <div style="font-size:12px; color:#cbd5e1; margin-top:6px; line-height:1.5;">
-            🏙️ <b>${esc(v.cidade)}</b> ${v.endereco ? "• " + esc(v.endereco) : ""}<br>
+            🏙️ <b>${esc(v.cidade)} - MA</b> ${v.endereco ? "• " + esc(v.endereco) : ""}<br>
             📞 ${esc(v.telefone)} • 🏷️ ${esc(v.tipoAcao)}<br>
+            ${v.produtosResumo ? `📦 <b>Itens:</b> ${esc(v.produtosResumo)}<br>` : ""}
             💰 <b style="color:var(--verde);">${moeda(v.valor)}</b> (${esc(v.pagamento)})
-            ${v.obs ? `<br>📝 <i>${esc(v.obs)}</i>` : ""}
           </div>
           <div class="acoes-parada">
-            <button class="btn btn-azul btn-sm" onclick='abrirFormParada(${JSON.stringify(v).replace(/'/g, "&#39;")})'>✅ Check-in / Editar</button>
+            <button class="btn btn-azul btn-sm" onclick='abrirFormParada(${JSON.stringify(v).replace(/'/g, "&#39;")})'>✅ Check-in / Pedido</button>
             <button class="btn btn-outline btn-sm" onclick="abrirMapaGPS('${esc(v.endereco)}','${esc(v.cidade)}')">🗺️ GPS</button>
             <button class="btn btn-verde btn-sm" onclick='enviarZapVisita(${JSON.stringify(v).replace(/'/g, "&#39;")})'>📲 Zap</button>
           </div>
         </div>
       `;
-    }).join("") || "<p style='text-align:center; color:#64748b; padding:24px; font-size:13px;'>Nenhuma parada na rota. Toque em <b>+ Nova Parada</b> ou puxe um cliente da <b>Carteira</b>.</p>";
+    }).join("") || "<p style='text-align:center; color:#64748b; padding:24px; font-size:13px;'>Nenhuma parada encontrada neste filtro.</p>";
+  }
+
+  function renderizarProdutos() {
+    const busca = (document.getElementById("busca-produto").value || "").toLowerCase();
+    const div = document.getElementById("lista-produtos");
+    const filtrados = produtos.filter(p =>
+      p.nome.toLowerCase().includes(busca) || String(p.codigo).includes(busca) || p.categoria.toLowerCase().includes(busca)
+    );
+
+    div.innerHTML = filtrados.map(p => `
+      <div class="parada-card" style="border-left-color:var(--verde);">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+          <b>${esc(p.nome)}</b>
+          <b style="color:var(--verde); white-space:nowrap;">${moeda(p.preco)}</b>
+        </div>
+        <div style="font-size:12px; color:#cbd5e1; margin-top:5px;">
+          🏷️ Cód: <b>${esc(p.codigo)}</b> • Categoria: ${esc(p.categoria)} • Estoque: <b>${p.estoque} ${esc(p.unidade)}</b>
+        </div>
+      </div>
+    `).join("") || "<p style='text-align:center; color:#64748b; padding:20px; font-size:13px;'>Carregando catálogo de produtos...</p>";
+  }
+
+  function renderizarRotasMA() {
+    const div = document.getElementById("lista-rotas-ma");
+    div.innerHTML = rotasMA.map(r => `
+      <div style="padding:10px; border:1px solid var(--borda); border-radius:10px; margin-bottom:8px; background:var(--bg-input);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <b style="color:var(--azul); font-size:13px;">${esc(r.nome)}</b>
+          <span style="font-size:11px; color:#fcd34d;">${esc(r.diaSemana)} • ${esc(r.distancia)}</span>
+        </div>
+        <div style="font-size:12px; color:#cbd5e1; margin-top:4px;">
+          🏢 Sede: <b>${esc(r.sede)}</b><br>
+          📍 Cidades: ${esc(r.cidades)}
+        </div>
+      </div>
+    `).join("");
   }
 
   function renderizarCarteira() {
     const busca = (document.getElementById("busca-carteira").value || "").toLowerCase();
     const div = document.getElementById("lista-carteira");
     const filtrados = clientes.filter(c =>
-      c.nome.toLowerCase().includes(busca) || c.cidade.toLowerCase().includes(busca)
+      c.nome.toLowerCase().includes(busca) || c.cidade.toLowerCase().includes(busca) || (c.rota || "").toLowerCase().includes(busca)
     );
 
     div.innerHTML = filtrados.map(c => `
       <div class="parada-card" style="border-left-color:var(--azul);">
+        <div class="chip-rota">🚚 ${esc(c.rota || "Rota Geral")}</div>
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <b>${esc(c.nome)}</b>
-          <span style="font-size:11px; color:var(--azul); font-weight:700;">${esc(c.cidade)}</span>
+          <span style="font-size:11px; color:var(--azul); font-weight:700;">${esc(c.cidade)} - MA</span>
         </div>
         <div style="font-size:12px; color:#cbd5e1; margin-top:4px;">
-          📍 ${esc(c.endereco || "Sem endereço")} • 📞 ${esc(c.telefone)}
+          📍 ${esc(c.endereco || "Centro")} • 📞 ${esc(c.telefone)}
         </div>
         <div class="acoes-parada">
           <button class="btn btn-azul btn-sm" onclick='enviarParaRotaHoje(${JSON.stringify(c).replace(/'/g, "&#39;")})'>➕ Jogar na Rota de Hoje</button>
-          <button class="btn btn-outline btn-sm" onclick="abrirMapaGPS('${esc(c.endereco)}','${esc(c.cidade)}')">🗺️ Mapa</button>
+          <button class="btn btn-outline btn-sm" onclick="abrirMapaGPS('${esc(c.endereco)}','${esc(c.cidade)}')">🗺️ GPS</button>
         </div>
       </div>
-    `).join("") || "<p style='text-align:center; color:#64748b; padding:20px; font-size:13px;'>Carteira vazia. Importe sua planilha antiga ou salve clientes ao criar paradas.</p>";
+    `).join("");
   }
 
   function enviarParaRotaHoje(cli) {
     mudarAba("rota", document.getElementById("nav-rota"));
     abrirFormParada({
+      rota: cli.rota,
       cliente: cli.nome,
       cidade: cli.cidade,
       telefone: cli.telefone,
@@ -608,6 +795,7 @@
     const div = document.getElementById("lista-despesas");
     div.innerHTML = despesas.map(d => `
       <div class="parada-card" style="border-left-color:var(--amarelo);">
+        <div class="chip-rota">🚚 ${esc(d.rota || "Sede Bacabal - MA")}</div>
         <div style="display:flex; justify-content:space-between;">
           <b>${esc(d.categoria)}</b>
           <b style="color:var(--amarelo);">${moeda(d.valor)}</b>
@@ -640,9 +828,13 @@
       const resp = await fetch(API_URL + "?acao=carregarTudo");
       const json = await resp.json();
       if (json.status === "ok") {
+        rotasMA = json.rotas || [];
+        produtos = json.produtos || [];
         clientes = json.clientes || [];
         visitas = json.visitas || [];
         despesas = json.despesas || [];
+        localStorage.setItem("rotapro_rotas", JSON.stringify(rotasMA));
+        localStorage.setItem("rotapro_produtos", JSON.stringify(produtos));
         localStorage.setItem("rotapro_clientes", JSON.stringify(clientes));
         localStorage.setItem("rotapro_visitas", JSON.stringify(visitas));
         localStorage.setItem("rotapro_despesas", JSON.stringify(despesas));
@@ -662,4 +854,4 @@
   sincronizarTudo();
 </script>
 </body>
-</html>www/index.html
+</html>
